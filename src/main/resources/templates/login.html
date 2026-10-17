@@ -1,0 +1,53 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Đăng nhập</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Đăng nhập</h1>
+
+      <div
+        th:if="${success}"
+        class="success"
+        id="success-msg"
+        th:text="${success}"
+      ></div>
+      <div
+        th:if="${error}"
+        class="error"
+        id="error-msg"
+        th:text="${error}"
+      ></div>
+
+      <form method="post" th:action="@{/login}" id="login-form">
+        <label for="username">Tên đăng nhập</label>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          th:value="${username}"
+          required
+          placeholder="Nhập tên đăng nhập"
+        />
+
+        <label for="password">Mật khẩu</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          required
+          placeholder="Nhập mật khẩu"
+        />
+
+        <button type="submit" id="login-submit">Đăng nhập</button>
+      </form>
+      <p>
+        Chưa có tài khoản?
+        <a th:href="@{/register}" id="go-register">Đăng ký ngay</a>
+      </p>
+    </div>
+  </body>
+</html>

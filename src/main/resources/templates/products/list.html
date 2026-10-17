@@ -1,0 +1,71 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Danh sách sản phẩm</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+  </head>
+  <body>
+    <div class="container wide">
+      <div class="top-bar">
+        <h1>Danh sách sản phẩm</h1>
+        <div>
+          <span th:text="'Xin chào, ' + ${currentUser}"></span>
+          | <a th:href="@{/logout}" id="logout-link">Đăng xuất</a>
+        </div>
+      </div>
+
+      <a class="btn" th:href="@{/products/new}" id="add-product-btn"
+        >+ Thêm sản phẩm</a
+      >
+
+      <table id="product-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Tên</th>
+            <th>Mô tả</th>
+            <th>Giá</th>
+            <th>Số lượng</th>
+            <th style="text-align: center">Hành động</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            th:each="p : ${products}"
+            th:attr="data-id=${p.id}"
+            class="product-row"
+          >
+            <td th:text="${p.id}"></td>
+            <td th:text="${p.name}" class="product-name"></td>
+            <td th:text="${p.description}"></td>
+            <td th:text="${p.price}"></td>
+            <td th:text="${p.quantity}"></td>
+            <td style="text-align: center">
+              <a th:href="@{/products/{id}/edit(id=${p.id})}" class="edit-link"
+                >Sửa</a
+              >
+              <form
+                th:action="@{/products/{id}/delete(id=${p.id})}"
+                method="post"
+                style="display: inline; margin-left: 5px"
+              >
+                <button
+                  type="submit"
+                  class="danger delete-btn"
+                  onclick="
+                    return confirm(
+                      'Bạn có chắc chắn muốn xoá sản phẩm này không?',
+                    );
+                  "
+                >
+                  Xoá
+                </button>
+              </form>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </body>
+</html>
