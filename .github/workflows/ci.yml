@@ -1,18 +1,15 @@
 name: CI - Automation Test
 
-# Y5: Tự động chạy test khi push/pull request vào nhánh main
 on:
   push:
     branches: ["main"]
   pull_request:
     branches: ["main"]
-  # Cho phép chạy thủ công từ tab Actions trên GitHub, tiện khi demo/bảo vệ
   workflow_dispatch:
 
 jobs:
   # ============================================================
-  # Job 1: Smoke test - nhóm test quan trọng nhất, chạy nhanh,
-  # dùng để kiểm tra nhanh "ứng dụng có còn sống" sau mỗi commit.
+  # Job 1: Smoke test
   # ============================================================
   smoke:
     name: Smoke Test (JUnit, nhóm smoke)
@@ -29,7 +26,7 @@ jobs:
           cache: maven
 
       - name: Chạy smoke test
-        working-directory: ./webapp
+        # Đã xóa working-directory, chạy trực tiếp ở thư mục gốc
         run: mvn -B test -Dgroups=smoke
 
       - name: Upload Surefire report (smoke)
@@ -37,11 +34,11 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: smoke-test-report
-          path: webapp/target/surefire-reports/
+          # Đã sửa lại đường dẫn bỏ chữ webapp/
+          path: target/surefire-reports/
 
   # ============================================================
-  # Job 2: Regression test - toàn bộ JUnit test (trừ Selenium UI,
-  # vì UI test tốn thời gian hơn và cần trình duyệt riêng).
+  # Job 2: Regression test
   # ============================================================
   regression:
     name: Regression Test (JUnit đầy đủ)
@@ -59,7 +56,6 @@ jobs:
           cache: maven
 
       - name: Chạy toàn bộ unit/integration test (JUnit)
-        working-directory: ./webapp
         run: mvn -B test
 
       - name: Upload Surefire report (regression)
@@ -67,12 +63,10 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: regression-test-report
-          path: webapp/target/surefire-reports/
+          path: target/surefire-reports/
 
   # ============================================================
-  # Job 3: UI test bằng Selenium - chạy trên Chrome headless.
-  # ubuntu-latest đã cài sẵn Chrome, WebDriverManager tự đồng bộ
-  # phiên bản ChromeDriver tương ứng.
+  # Job 3: UI test bằng Selenium
   # ============================================================
   ui-test:
     name: UI Test (Selenium, nhóm ui)
@@ -90,7 +84,6 @@ jobs:
           cache: maven
 
       - name: Chạy Selenium UI test
-        working-directory: ./webapp
         run: mvn -B test -Dgroups=ui
 
       - name: Upload Surefire report (UI)
@@ -98,12 +91,12 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ui-test-report
-          path: webapp/target/surefire-reports/
+          path: target/surefire-reports/
 
       - name: Upload screenshot khi test fail (nếu có)
         if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: ui-test-failure-screenshots
-          path: webapp/target/screenshots/
+          path: target/screenshots/
           if-no-files-found: ignore
